@@ -1,0 +1,83 @@
+#include <iostream>
+#include <time.h> 		
+
+int depth;
+int calls;
+int maxDepth;
+int underflows;
+int overflows;
+int numberWindows;
+int usedWindows;
+
+
+void reset(int registerSets){
+depth = 0;
+calls = 0;
+maxDepth = 0;
+underflows = 0;
+overflows = 0;
+usedWindows = 2;
+numberWindows = registerSets; //variable depending on test 6,8 or 16 reg sets
+}
+
+int ackermann(int x, int y) {
+	depth++;
+	if (depth > maxDepth) {
+		maxDepth = depth;
+	}
+	if (usedWindows == numberWindows) {
+		overflows++;
+	}
+	else  usedWindows++;
+
+	if (x == 0) {
+		calls = y + 1;
+	}
+	else if (y == 0) {
+		calls = ackermann(x - 1, 1);
+	}
+	else {
+		calls = ackermann(x - 1, ackermann(x, y - 1));
+	}
+
+	depth--;
+	if (usedWindows == 2) {
+		underflows++;
+	}
+	else usedWindows--;
+
+	return calls;
+}
+
+
+int main()
+{
+
+    char format []= " Procedure calls = %d, max RW Depth = %d, RW overflows = %d, RW underflows = %d ";
+    //run with register set 6
+	clock_t start = clock();
+	reset(6);
+	int result =ackermann(3,6);
+	printf(format, result, maxDepth, overflows, underflows, usedWindows, numberWindows);
+	clock_t end = clock();
+	printf("time = %g ms\n", (double)(end - start) / CLOCKS_PER_SEC);
+
+	//run with register set 8
+	start = clock();
+	reset(8);
+    result =ackermann(3,6);
+	printf(format, result, maxDepth, overflows, underflows, usedWindows, numberWindows);
+    end = clock();
+	printf("time = %g ms\n", (double)(end - start) / CLOCKS_PER_SEC);
+
+	//run with register 16
+	start = clock();
+	reset(16);
+    result =ackermann(3,6);
+	printf(format,result, maxDepth, overflows, underflows, usedWindows, numberWindows);
+	end = clock();
+	printf("time = %g ms\n", (double)(end - start) / CLOCKS_PER_SEC);
+
+	return 0;
+}
+

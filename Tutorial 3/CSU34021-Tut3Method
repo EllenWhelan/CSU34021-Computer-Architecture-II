@@ -1,0 +1,4 @@
+The screenshot attatched shows the console output of running ackerman(3,6) with register sets of 6,8,16 respectively, run in CLion on Hp pavillion with intel core i5 7th gen.
+Time taken for ackerman was calculated using time.h clock.
+This method will give varying results dependent on what machine is used.
+The accuracy of the method I used may be affected by the fact that my laptop was running other programs at the time. The 

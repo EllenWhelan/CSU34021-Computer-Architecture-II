@@ -1,0 +1,114 @@
+.686                                ; create 32 bit code
+.model flat, C                      ; 32 bit memory model
+ option casemap:none                ; case sensitive
+
+ 
+.data; start of a data section
+public g; export variable g
+
+g DWORD 4; declare global variable g initialised to 4
+
+.code; start of a code section
+
+
+; min subroutine
+; Calculates the smallest of 3 signed integers
+; params:
+;		ebp+8: 	a - first signed integer
+;		ebp+12: b - second signed integer
+;		ebp+16: c - third signed integer
+; return: 	v	- signed integer returned in eax
+
+public		min
+
+min:		;function entry
+			push ebp				; frame pointer
+			mov ebp, esp			; update frame pointer
+			sub esp, 4				; space for local variable v
+
+			;function body
+			mov eax, [ebp+8]		; v=a
+			cmp[ebp+12], eax			; if(v>b)
+			jge c_less				; {
+			mov eax, [ebp+12]		; v =b
+			
+
+			
+c_less:		cmp [ebp+16], eax		;if (v>c)
+			jge endMin
+			mov eax, [ebp+16]
+			
+endMin:		;function exit
+	
+			mov esp, ebp
+			pop ebp
+			ret 0
+
+
+
+; p subroutine
+; params:
+;		ebp+8:	i - first signed integer
+;		ebp+12:	j - second signed integer
+;		ebp+16: k	- third signed integer
+;		ebp+20: l - fourth signed integer
+;	return: min(min(g, i, j), k, l) - signed integer
+
+public p
+p:			;function entry
+			push ebp				; frame pointer
+			mov ebp, esp			; update frame pointer
+
+			;first call to min- min(g, i, j)
+			push [ebp+12]			;push j
+			push [ebp+8]			;push i
+			push g					; push global g
+			call min
+			add esp, 12				;remove parameters g, i ,j from stack
+
+			;second call to min - min(min (g,i,j), k, l)
+			push [ebp+20]			;push l
+			push [ebp+16]			;push k
+			push eax				;push min(g,i,j)
+			call min
+			add esp, 12
+
+			;end of function
+			mov esp, ebp
+			pop ebp
+			ret 0
+
+; gcd subroutine
+; Calculates the greatest common divisor of two values
+; params:
+;		ebp+8:	a - first integer
+;		ebp+12: b - second integer
+; return: signed integer
+
+public gcd
+gcd:		;function entry
+			push ebp				; frame pointer
+			mov ebp, esp			; update frame pointer
+
+			mov eax, [ebp+12]		;tmp=b
+			test eax, eax			;if(b==0)
+			jne els
+			mov eax, [ebp+8]		;return a as result in eax
+			jmp end_a
+			
+els:		mov eax, [ebp+8]		; tmp=a
+			xor edx, edx			;clear edx
+			mov ecx, [ebp+12]		; tmp=b
+			idiv ecx				; edx= eax%ecx or edx=a%b
+			push edx				;gcd(b, a%b) push a%b
+			push [ebp+12]			;push b
+			call gcd
+			add esp, 8				;remove parameters
+
+end_a:		
+			mov esp, ebp
+			pop ebp
+			ret 0
+
+
+end

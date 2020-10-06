@@ -1,0 +1,3 @@
+I was unable to get this code to build after days of trying and remaking files over and over.
+ The t1Test.cpp file seems to recognise the various min, gcd and p functions and has no errors but
+ then cannot identify them at build time. 

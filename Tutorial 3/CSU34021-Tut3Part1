@@ -1,0 +1,43 @@
+public min
+
+min:  add r26,r0,r1       ; mov a to new register v
+      sub r27,r1,r0,{C}   ; if v > b
+      jge min0
+      xor r0,r0,r0        ; nop
+      add r27,r0,r1       ; v = b
+min0: sub r28,r1,r0,{C}   ; v > c
+      jge min1
+      xor r0,r0,r0        ; nop
+      add r28,r0,r1       ; v = c
+min1: ret r25,0           ; return
+      xor r0,r0,r0        ; no
+
+
+public p
+
+p:    add r9,r0,r10       ; first param of min = g
+      add r26,r0,r11      ; second param of min = i
+      callr r25, min      ; call min
+      add r27,r0,r12      ; third param of min = j
+      add r1,r0,r10       ; first param of min is the result of last min
+      add r28,r0,r11      ; second param of min = k
+      callr r25, min      ; call min
+      add r29,r0,r11      ; third param of min = l
+      ret r25,0           ; return
+      xor r0,r0,r0        ; no
+
+public gcd
+gcd:  sub r27,r0,r0,{C}   ; if b == 0
+      jeq gcd0
+      add r26,r0,r1       ; r1 = a - computed every loop
+      add r26,r0,r10      ; a param
+      callr r25,mod       ; call mod
+      add r27,r0,r11      ; second param is b for mod
+      add r27,r0,r10      ; b param
+      callr r25,gcd       ; call gcd
+      add r1,r0,r11       ; a%b param
+gcd0: ret r25,0           ; return
+      xor r0,r0,r0        ; nop
+
+
+
